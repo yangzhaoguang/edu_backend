@@ -1,0 +1,12 @@
+#
+#spring:
+#    application:
+#        name: service-acl
+#    cloud:
+#        nacos:
+#            config:
+#                server-addr: localhost:8848 #地址
+#                file-extension: properties # 指明配置文件类型
+#                ext-config:
+#                    - data-id: port.properties # 配置文件名称。
+#                      refresh: true # 开启动态刷新配置，否则配置文件修改，工程无法感知
