@@ -90,14 +90,13 @@ public class MenuUtil {
         queryWrapper.eq("pid",id);
         queryWrapper.select("id");
         List<Permission> list = permissionService.list(queryWrapper);
-
-        // 2. 遍历所有的子级菜单，将子级菜单的 id 增加到集合中
-        for (Permission permission : list) {
-            idsList.add(permission.getId());
-            // 3. 继续递归找下一个子级菜单
-            selectChildrenById(permission.getId(),idsList);
+        if (list.size()>0){
+            // 2. 遍历所有的子级菜单，将子级菜单的 id 增加到集合中
+            for (Permission permission : list) {
+                idsList.add(permission.getId());
+                // 3. 继续递归找下一个子级菜单
+                selectChildrenById(permission.getId(),idsList);
+            }
         }
     }
-
-
 }

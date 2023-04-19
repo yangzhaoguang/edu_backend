@@ -1,5 +1,6 @@
 package com.atguigu.aclservice.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.atguigu.aclservice.entity.Permission;
 import com.atguigu.aclservice.entity.RolePermission;
@@ -13,6 +14,8 @@ import com.atguigu.aclservice.service.UserService;
 import com.atguigu.aclservice.utils.MenuUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -36,6 +39,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private PermissionService permissionService;
 
 
     //根据角色获取菜单
@@ -92,9 +97,9 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         } else {
             selectPermissionList = baseMapper.selectPermissionByUserId(userId);
         }
-
         List<Permission> permissionList = PermissionHelper.bulid(selectPermissionList);
-        List<JSONObject> result = MemuHelper.bulid(permissionList);
+        System.out.println("permissionList==>" + permissionList.size());
+        List<JSONObject> result = MemuHelper.bulid(permissionList); 
         return result;
     }
 
@@ -142,10 +147,14 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
      */
     @Override
     public void removeChildByIdGuli(String id) {
-        // 保存删除菜单的 id 集合
+        List<Permission> list = permissionService.list(new QueryWrapper<Permission>().eq("pid", id));
         ArrayList<String> idsList = new ArrayList<>();
-        // 根据子级菜单递归查找下一个子级菜单,封装到 idsList中
-        MenuUtil.selectChildrenById(id, idsList);
+        // 判断删除的菜单下是否有子菜单
+        if (list.size() > 0) {
+            // 保存删除菜单的 id 集合
+            // 根据子级菜单递归查找下一个子级菜单,封装到 idsList中
+            MenuUtil.selectChildrenById(id, idsList);
+        }
         idsList.add(id);
         // 删除 所有菜单
         this.removeBatchByIds(idsList);
@@ -155,13 +164,24 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     public void saveRolePermissionRealtionShipGuli(String roleId, String[] permissionIds) {
 
+        boolean flag = false;
         // 创建集合保存 角色和菜单 的对应关系
         ArrayList<RolePermission> rolePermissionList = new ArrayList<>();
         for (String permissionId : permissionIds) {
+            // 说明有了全部数据的权限
+            if ("1".equals(permissionId)) {
+                flag = true;
+            }
             RolePermission rolePermission = new RolePermission();
             rolePermission.setRoleId(roleId);
             rolePermission.setPermissionId(permissionId);
-
+            // 保存到集合中
+            rolePermissionList.add(rolePermission);
+        }
+        if (!flag){
+            RolePermission rolePermission = new RolePermission();
+            rolePermission.setRoleId(roleId);
+            rolePermission.setPermissionId("1");
             // 保存到集合中
             rolePermissionList.add(rolePermission);
         }

@@ -1,8 +1,10 @@
 package com.atguigu.aclservice.service.impl;
 
 import com.atguigu.aclservice.entity.Role;
+import com.atguigu.aclservice.entity.RolePermission;
 import com.atguigu.aclservice.entity.UserRole;
 import com.atguigu.aclservice.mapper.RoleMapper;
+import com.atguigu.aclservice.service.RolePermissionService;
 import com.atguigu.aclservice.service.RoleService;
 import com.atguigu.aclservice.service.UserRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,6 +32,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private RolePermissionService rolePermissionService;
 
 
     //根据用户获取角色数据
@@ -86,4 +90,19 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         }
         return roleList;
     }
+
+    /*
+    * 查询是否为该角色分配了菜单.如果删除菜单
+    * */
+    @Override
+    public void removeMenuWithRoleId(String roleId) {
+
+        List<RolePermission> list = rolePermissionService.list(new QueryWrapper<RolePermission>().eq("role_id", roleId));
+        if (list.size() != 0) {
+            List<String> ids = list.stream().map(RolePermission::getId).collect(Collectors.toList());
+            // 删除为角色分配的权限
+            rolePermissionService.removeBatchByIds(ids);
+        }
+    }
+
 }

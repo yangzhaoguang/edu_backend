@@ -72,7 +72,9 @@ public class RoleController {
     @ApiOperation(value = "删除角色")
     @DeleteMapping("remove/{id}")
     public R remove(@PathVariable String id) {
-        roleService.removeById(id);
+        roleService.removeMenuWithRoleId(id);
+        // 删除角色
+      roleService.removeById(id);
         return R.ok();
     }
 

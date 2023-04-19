@@ -75,8 +75,10 @@ public class MemuHelper {
                 }
                 oneMeun.put("children", children);
                 meuns.add(oneMeun);
+                System.out.println("oneMenu" + oneMeun);
             }
         }
+
         return meuns;
     }
 }

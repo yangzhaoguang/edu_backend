@@ -46,7 +46,7 @@ public class UcenterMemberServiceImpl extends ServiceImpl<UcenterMemberMapper, U
      * @return java.lang.String
      */
     @Override
-    public String login(UcenterMember member) {
+    public String login(UcenterMember member) throws Exception{
         // 校验信息
         String password = member.getPassword();
         String phone = member.getMobile();

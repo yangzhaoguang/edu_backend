@@ -44,7 +44,7 @@ public class MsmServiceImpl implements MsmService {
 
 
         DefaultProfile profile =
-                DefaultProfile.getProfile("default", "your accesskeyId", "your secret");
+                DefaultProfile.getProfile("default", "LTAI5tGjb9ShtDqouVfYRbQD", "N6Ee5EDar2YgQqTmegGWth7Tp3qmU7");
         IAcsClient client = new DefaultAcsClient(profile);
 
         CommonRequest request = new CommonRequest();

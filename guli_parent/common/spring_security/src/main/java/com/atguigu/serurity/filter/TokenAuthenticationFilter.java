@@ -22,14 +22,11 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * <p>
- * 访问过滤器
- * </p>
- *
- * @author qy
- * @since 2019-11-08
+ * 认证过滤器：自动从请求头中获取token，然后根据token解析成username，根据username获取登录的用户信息。
+ * 将用户信息保存到 SecurityContextHolder
  */
 public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
+
     private TokenManager tokenManager;
     private RedisTemplate redisTemplate;
 
@@ -42,7 +39,10 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        logger.info("================="+req.getRequestURI());
+
+        System.out.println("执行了 doFilterInternal 方法。。。。");
+
+        // 如果请求路径中没有带admin。说明后台请求，直接放行
         if(req.getRequestURI().indexOf("admin") == -1) {
             chain.doFilter(req, res);
             return;
@@ -56,6 +56,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
         }
 
         if (authentication != null) {
+            // 将 Authentication 封装到 SecurityContextHolder 中。
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             ResponseUtil.out(res, R.error());
@@ -63,21 +64,25 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
         chain.doFilter(req, res);
     }
 
+    // 封装Authentication对象，包括用户信息，token，权限。
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        // token置于header里
+        // 从请求头中获取token
         String token = request.getHeader("token");
         if (token != null && !"".equals(token.trim())) {
+            // 将token解析成username
             String userName = tokenManager.getUserFromToken(token);
-
+            // 根据 username 从redis中获取权限列表
             List<String> permissionValueList = (List<String>) redisTemplate.opsForValue().get(userName);
             Collection<GrantedAuthority> authorities = new ArrayList<>();
             for(String permissionValue : permissionValueList) {
                 if(StringUtils.isEmpty(permissionValue)) continue;
+                // 将权限保存到集合中
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(permissionValue);
                 authorities.add(authority);
             }
 
             if (!StringUtils.isEmpty(userName)) {
+                // 封装Authentication对象并返回
                 return new UsernamePasswordAuthenticationToken(userName, token, authorities);
             }
             return null;

@@ -84,5 +84,5 @@ implements EduSubjectService{
         }
         return finalList;
     }
-    }
+}
 

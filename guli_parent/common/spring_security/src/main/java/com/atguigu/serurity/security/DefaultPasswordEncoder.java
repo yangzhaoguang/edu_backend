@@ -5,12 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>
- * t密码的处理方法类型
- * </p>
- *
- * @author qy
- * @since 2019-11-08
+ * PasswordEncoder 处理密码的接口
  */
 @Component
 public class DefaultPasswordEncoder implements PasswordEncoder {

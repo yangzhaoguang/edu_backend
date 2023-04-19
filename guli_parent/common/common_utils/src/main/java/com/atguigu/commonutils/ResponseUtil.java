@@ -8,6 +8,9 @@ import org.springframework.http.MediaType;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 响应工具类，将r对象响应到浏览上
+ */
 public class ResponseUtil {
 
     public static void out(HttpServletResponse response, R r) {

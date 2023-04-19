@@ -1,6 +1,9 @@
 package com.atguigu.order.service;
 
+import com.atguigu.commonutils.orderVo.PayLogQuery;
+import com.atguigu.order.entity.Order;
 import com.atguigu.order.entity.PayLog;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;
@@ -20,4 +23,7 @@ public interface PayLogService extends IService<PayLog> {
 
     // 修改支付状态，插入数据
     void UpdateOrderStatus(Map<String, String> map);
+
+
+    Page<PayLog> pageQuery(long current, long size, PayLogQuery payLogQuery);
 }

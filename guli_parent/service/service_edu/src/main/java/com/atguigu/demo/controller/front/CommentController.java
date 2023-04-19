@@ -1,13 +1,17 @@
 package com.atguigu.demo.controller.front;
 
 import com.atguigu.commonutils.R;
+import com.atguigu.commonutils.ResultCode;
 import com.atguigu.demo.entity.EduComment;
 import com.atguigu.demo.service.EduCommentService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +46,16 @@ public class CommentController {
         return R.ok().data(commentMap);
     }
 
+    // 根据课程id查询所有评论
+    @GetMapping("/selectComment/{courseId}")
+    private R selectComment(@PathVariable String courseId) {
+        List<EduComment> list = commentService.list(new LambdaQueryWrapper<EduComment>().eq(EduComment::getCourseId, courseId));
+        if (list.size() == 0) {
+            return  R.error().code(ResultCode.ERROR).message("该课程暂无评论");
+        }
+        return R.ok().data("commentList",list);
+    }
+
     /**
      * @description
      * @date 2022/9/7 17:31
@@ -53,6 +67,13 @@ public class CommentController {
     private R saveComment(@RequestBody EduComment eduComment) {
         boolean result = commentService.save(eduComment);
         return  result ? R.ok().message("发布评论成功") : R.ok().message("发布评论失败");
+    }
+
+    @ApiOperation("删除评论")
+    @DeleteMapping("removeComment/{commentId}")
+    private R removeComment(@PathVariable String commentId ) {
+        commentService.removeById(commentId);
+        return  R.ok();
     }
 
 }

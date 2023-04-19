@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class WXConstantPropertiesUtil implements InitializingBean {
+
+
     @Value("${wx.open.app_id}")
     private String appId;
 

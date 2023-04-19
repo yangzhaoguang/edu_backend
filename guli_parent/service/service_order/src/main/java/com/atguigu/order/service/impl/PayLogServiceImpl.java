@@ -3,9 +3,12 @@ package com.atguigu.order.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atguigu.commonutils.HttpClient;
+import com.atguigu.commonutils.orderVo.PayLogQuery;
 import com.atguigu.order.entity.Order;
 import com.atguigu.order.service.OrderService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.order.entity.PayLog;
 import com.atguigu.order.service.PayLogService;
@@ -136,7 +139,7 @@ public class PayLogServiceImpl extends ServiceImpl<PayLogMapper, PayLog>
 
         // 查询订单信息
         QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("order_no",orderNo);
+        queryWrapper.eq("order_no", orderNo);
         Order order = orderService.getOne(queryWrapper);
 
         // 修改支付状态,如果是已支付，就不用修改
@@ -145,7 +148,7 @@ public class PayLogServiceImpl extends ServiceImpl<PayLogMapper, PayLog>
         orderService.updateById(order);
 
         //记录支付日志
-        PayLog payLog=new PayLog();
+        PayLog payLog = new PayLog();
         payLog.setOrderNo(order.getOrderNo());//支付订单号
         payLog.setPayTime(new Date());
         payLog.setPayType(1);//支付类型
@@ -155,6 +158,32 @@ public class PayLogServiceImpl extends ServiceImpl<PayLogMapper, PayLog>
         payLog.setAttr(JSONObject.toJSONString(map)); // 其余属性
 
         baseMapper.insert(payLog);//插入到支付日志表
+    }
+
+    @Override
+    public Page<PayLog> pageQuery(long current, long size, PayLogQuery payLogQuery) {
+        // 创建分页对象
+        Page<PayLog> pagePayLog = new Page<>(current, size);
+        QueryWrapper<PayLog> queryWrapper = new QueryWrapper<>();
+
+        Date payTime = null;
+        Integer payType = null;
+
+        if (payLogQuery != null) {
+            payTime = payLogQuery.getPay_time();
+            payType = payLogQuery.getPayType();
+        }
+        // 获取条件
+        // 使用 condition 组装条件
+        queryWrapper
+                .ge(payTime != null, "pay_time", payTime)
+                .eq(payType != null, "pay_type", payType);
+        //根据创建时间排序
+        queryWrapper.orderByDesc("gmt_create");
+
+        this.page(pagePayLog, queryWrapper);
+        // 返回总页数 和 分页数据
+        return pagePayLog;
     }
 }
 

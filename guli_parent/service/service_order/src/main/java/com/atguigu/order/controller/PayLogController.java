@@ -1,7 +1,12 @@
 package com.atguigu.order.controller;
 
 import com.atguigu.commonutils.R;
+import com.atguigu.commonutils.orderVo.OrderQuery;
+import com.atguigu.commonutils.orderVo.PayLogQuery;
+import com.atguigu.order.entity.Order;
+import com.atguigu.order.entity.PayLog;
 import com.atguigu.order.service.PayLogService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +54,20 @@ public class PayLogController {
         }else{
             return R.error().message("支付中....");
         }
+    }
 
+    /*
+     * 查询支付日志
+     * */
+    @ApiOperation("多条件组合查询分页功能")
+    @PostMapping("/pageQuery/{current}/{size}")
+    public R pageQuery(
+            @PathVariable(required = false) long current,
+            @PathVariable(required = false) long size,
+            @RequestBody(required = false) PayLogQuery payLogQuery
+    ) {
+        Page<PayLog> pagePayLog =  payLogService.pageQuery(current,size,payLogQuery);
+
+        return R.ok().data("page",pagePayLog);
     }
 }

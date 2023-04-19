@@ -2,6 +2,8 @@ package com.atguigu.oss.utils;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +15,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ConstantPropertiesUtil implements InitializingBean {
+
+//     aliyun.oss.file.endpoint=oss-cn-beijing.aliyuncs.com
+//     aliyun.oss.file.keyid=LTAI5tGjb9ShtDqouVfYRbQD
+//     aliyun.oss.file.keysecret=N6Ee5EDar2YgQqTmegGWth7Tp3qmU7
+// #bucket可以在控制台创建，也可以使用java代码创建
+//     aliyun.oss.file.bucketname=edu-1010-headphoto
 
     //使用 Spring 中的 @Value 注解读取配置文件中的内容
     @Value("${aliyun.oss.file.endpoint}")

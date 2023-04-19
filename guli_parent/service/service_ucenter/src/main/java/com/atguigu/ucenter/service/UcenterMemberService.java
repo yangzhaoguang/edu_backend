@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 */
 public interface UcenterMemberService extends IService<UcenterMember> {
 
-    String login(UcenterMember member);
+    String login(UcenterMember member) throws Exception;
 
 
     R register(RegisterVo registerVo);

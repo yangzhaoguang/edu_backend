@@ -1,4 +1,4 @@
-package com.atguigu.demo.config;
+package com.atguigu.servicebase.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

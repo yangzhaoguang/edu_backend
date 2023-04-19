@@ -69,6 +69,8 @@ public class UserController {
     @ApiOperation(value = "修改管理用户")
     @PutMapping("update")
     public R updateById(@RequestBody User user) {
+        // 对密码加密
+        user.setPassword(MD5.encrypt(user.getPassword()));
         userService.updateById(user);
         return R.ok();
     }
@@ -76,7 +78,7 @@ public class UserController {
     @ApiOperation(value = "删除管理用户")
     @DeleteMapping("remove/{id}")
     public R remove(@PathVariable String id) {
-        userService.removeById(id);
+        userService.removeRoleAndMenuWithUserId(id);
         return R.ok();
     }
 
@@ -99,6 +101,13 @@ public class UserController {
     public R doAssign(@RequestParam String userId,@RequestParam String[] roleId) {
         roleService.saveUserRoleRealtionShip(userId,roleId);
         return R.ok();
+    }
+
+    @GetMapping("/getUserInfo/{id}")
+    public R getUserInfo(@PathVariable String id) {
+        User user = userService.getById(id);
+        user.setPassword("");
+        return R.ok().data("user",user);
     }
 }
 

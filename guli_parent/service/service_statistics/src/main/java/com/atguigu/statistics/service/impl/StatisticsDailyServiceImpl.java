@@ -1,6 +1,7 @@
 package com.atguigu.statistics.service.impl;
 
 import com.atguigu.commonutils.R;
+import com.atguigu.statistics.SearchVo;
 import com.atguigu.statistics.service.UcenterFeignService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -56,52 +57,48 @@ public class StatisticsDailyServiceImpl extends ServiceImpl<StatisticsDailyMappe
     /**
      * @description  根据条件统计数据
      * @date 2022/9/14 20:56
-     * @param type
-     * @param begin
-     * @param end
      * @return java.util.Map
      */
     @Override
-    public Map getShowData(String type, String begin, String end) {
-        // 查询出统计的数据
+    public Map getShowData(SearchVo searchVo) {
         QueryWrapper<StatisticsDaily> wrapper = new QueryWrapper<>();
-        wrapper.between(!StringUtils.isAllEmpty(begin, end), "date_calculated", begin, end);
-        // 指定查询的字段
-        wrapper.select(type,"date_calculated");
-        List<StatisticsDaily> statisticsDailies = this.list(wrapper);
 
-        // 保存 日期 的集合
-        List<Object> dateList = new ArrayList<>();
-        // 保存 统计数据 的集合
-        List<Object> countList = new ArrayList<>();
+        String begin = searchVo.getBegin();
+        String end = searchVo.getEnd();
 
-
-        for (StatisticsDaily daily : statisticsDailies) {
-            dateList.add(daily.getDateCalculated());
-            // 统计哪个字段，就保存哪个字段的值
-            switch (type) {
-                case "register_num":
-                    countList.add(daily.getRegisterNum());
-                    break;
-                case "login_num":
-                    countList.add(daily.getLoginNum());
-                    break;
-                case "video_view_num":
-                    countList.add(daily.getVideoViewNum());
-                    break;
-                case "course_num":
-                    countList.add(daily.getCourseNum());
-                    break;
-                default:
-                    break;
-            }
-        }
+        wrapper.ge(!StringUtils.isEmpty(begin),"date_calculated",begin);
+        wrapper.le(!StringUtils.isEmpty(end),"date_calculated",end);
+        // 查询出所有的数据
+        List<StatisticsDaily> statisticsList = this.list(wrapper);
         // 将 list 集合保存到 map 集合中
         HashMap<String, Object> map = new HashMap<>();
-        map.put("dateList", dateList);
-        map.put("countList", countList);
 
+        if (statisticsList.size() > 0) {
+            // 保存 日期 的集合
+            List<Object> dateList = new ArrayList<>();
+            // 注册人数
+            List<Object> registerCount = new ArrayList<>();
+            // 登录人数
+            List<Object> loginCount = new ArrayList<>();
+            // 视频播放次数
+            List<Object> videoCount = new ArrayList<>();
+            // 课程增加数量
+            List<Object> courseCount = new ArrayList<>();
 
+            for (StatisticsDaily item : statisticsList) {
+                dateList.add(item.getDateCalculated());
+                registerCount.add(item.getRegisterNum());
+                loginCount.add(item.getLoginNum());
+                videoCount.add(item.getVideoViewNum());
+                courseCount.add(item.getCourseNum());
+            }
+
+            map.put("dateList", dateList);
+            map.put("registerCount", registerCount);
+            map.put("videoCount", videoCount);
+            map.put("courseCount", courseCount);
+            map.put("loginCount", loginCount);
+        }
         return map;
     }
 }

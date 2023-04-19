@@ -3,6 +3,7 @@ package com.atguigu.ucenter.controller;
 import com.atguigu.commonutils.JwtUtils;
 import com.atguigu.commonutils.R;
 import com.atguigu.commonutils.orderVo.UcenterOrderVo;
+import com.atguigu.servicebase.handler.GuliException;
 import com.atguigu.ucenter.entity.RegisterVo;
 import com.atguigu.ucenter.entity.UcenterMember;
 import com.atguigu.ucenter.service.UcenterMemberService;
@@ -41,7 +42,16 @@ public class UcenterController {
     @ApiOperation("前台登录")
     private R loginUser(@RequestBody UcenterMember member) {
         // 登录成功返回一个 token，使用 jwt 生成
-        String token = memberService.login(member);
+        String token = null;
+        try {
+            token = memberService.login(member);
+        } catch (Exception e) {
+            if (e instanceof GuliException) {
+               //  登录失败
+               return R.error().code(((GuliException) e).getCode()).message(((GuliException) e).getMsg());
+            }
+            e.printStackTrace();
+        }
         return R.ok().data("token", token);
     }
 

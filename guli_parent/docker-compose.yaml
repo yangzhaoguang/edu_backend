@@ -1,0 +1,80 @@
+version: "3.8"
+
+networks:
+    edu:
+
+services:
+    # 定义服务名字 microService，只要不冲突即可
+    gateway:
+        # 镜像名字
+        image: gateway:1.0
+        # 自定义容器名字
+        container_name: gateway
+        ports:
+            - "8222:8222"
+            # 网络模式
+        networks:
+            - edu
+    service_acl:
+        image: service_acl:1.0
+        container_name: service_acl
+        ports:
+            - "8009:8009"
+        networks:
+            - edu
+    service_cms:
+        image: service_cms:1.0
+        container_name: service_cms
+        ports:
+            - "8004:8004"
+        networks:
+            - edu
+    service_edu:
+        image: service_edu:1.0
+        container_name: service_edu
+        ports:
+            - "8001:8001"
+        networks:
+            - edu
+    service_msm:
+        image: service_msm:1.0
+        container_name: service_msm
+        ports:
+            - "8006:8006"
+        networks:
+            - edu
+    service_order:
+        image: service_order:1.0
+        container_name: service_order
+        ports:
+            - "8007:8007"
+        networks:
+            - edu
+    service_oss:
+        image: service_oss:1.0
+        container_name: service_oss
+        ports:
+            - "8002:8002"
+        networks:
+            - edu
+    service_statistics:
+        image: service_oss:1.0
+        container_name: service_statistics
+        ports:
+            - "8008:8008"
+        networks:
+            - edu
+    service_ucenter:
+        image: service_ucenter:1.0
+        container_name: service_ucenter
+        ports:
+            - "8160:8160"
+        networks:
+            - edu
+    service_vod:
+        image: service_vod:1.0
+        container_name: service_vod
+        ports:
+            - "8003:8003"
+        networks:
+            - edud

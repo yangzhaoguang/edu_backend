@@ -23,4 +23,12 @@ public interface RoleService extends IService<Role> {
     void saveUserRoleRealtionShip(String userId, String[] roleId);
 
     List<Role> selectRoleByUserId(String id);
+
+    /**
+     * @description 根据角色id删除角色、对应的菜单
+     * @date 2023/4/14 9:31
+     * @param roleId
+     * @return void
+     */
+    void removeMenuWithRoleId(String roleId);
 }

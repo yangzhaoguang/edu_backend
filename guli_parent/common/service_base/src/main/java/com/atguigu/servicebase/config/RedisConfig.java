@@ -1,4 +1,4 @@
-package com.atguigu.servicebase;
+package com.atguigu.servicebase.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

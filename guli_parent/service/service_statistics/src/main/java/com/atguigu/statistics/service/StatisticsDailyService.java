@@ -1,5 +1,6 @@
 package com.atguigu.statistics.service;
 
+import com.atguigu.statistics.SearchVo;
 import com.atguigu.statistics.entity.StatisticsDaily;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -16,5 +17,5 @@ public interface StatisticsDailyService extends IService<StatisticsDaily> {
     void registerCount(String date);
 
     // 获取统计的数据
-    Map getShowData(String type, String begin, String end);
+    Map getShowData(SearchVo searchVo);
 }

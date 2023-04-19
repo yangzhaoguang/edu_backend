@@ -26,8 +26,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  * @since 2019-11-18
  */
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableWebSecurity  // 开启SpringSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true) // 开启SpringSecurity权限配置
 public class TokenWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userDetailsService;
@@ -52,18 +52,18 @@ public class TokenWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.exceptionHandling()
-                .authenticationEntryPoint(new UnauthorizedEntryPoint())
-                .and().csrf().disable()
+                .authenticationEntryPoint(new UnauthorizedEntryPoint())  // 配置异常处理
+                .and().csrf().disable() // 关闭csrf
                 .authorizeRequests()
                 .anyRequest().authenticated()
-                .and().logout().logoutUrl("/admin/acl/index/logout")
-                .addLogoutHandler(new TokenLogoutHandler(tokenManager,redisTemplate)).and()
-                .addFilter(new TokenLoginFilter(authenticationManager(), tokenManager, redisTemplate))
-                .addFilter(new TokenAuthenticationFilter(authenticationManager(), tokenManager, redisTemplate)).httpBasic();
+                .and().logout().logoutUrl("/admin/acl/index/logout") // 退出访问路径
+                .addLogoutHandler(new TokenLogoutHandler(tokenManager,redisTemplate)).and() // 配置退出过滤器
+                .addFilter(new TokenLoginFilter(authenticationManager(), tokenManager, redisTemplate)) // 配置登录过滤器
+                .addFilter(new TokenAuthenticationFilter(authenticationManager(), tokenManager, redisTemplate)).httpBasic(); // 把token校验过滤器。增加到过滤器连中
     }
 
     /**
-     * 密码处理
+     * 使用自定义的密码处理逻辑
      * @param auth
      * @throws Exception
      */

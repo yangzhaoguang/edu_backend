@@ -1,6 +1,7 @@
 package com.atguigu.statistics.controller;
 
 import com.atguigu.commonutils.R;
+import com.atguigu.statistics.SearchVo;
 import com.atguigu.statistics.service.StatisticsDailyService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +39,15 @@ public class StatisticsController {
     /**
      * @description 获取统计的数据
      * @date 2022/9/14 20:44
-     * @param type 统计的字段
-     * @param begin 开始统计日期
-     * @param end 结束统计日期
      * @return com.atguigu.commonutils.R
      */
-    @GetMapping("showData/{type}/{begin}/{end}")
+    @PostMapping("showData/")
     @ApiOperation("获取展示的数据")
-    private R getShowData(@PathVariable String type,
-                          @PathVariable String begin,
-                          @PathVariable String end) {
-        Map map = statisticsDailyService.getShowData(type,begin,end);
+    private R getShowData(@RequestBody SearchVo searchVo) {
+
+        Map map = statisticsDailyService.getShowData(searchVo);
+        // statisticsDailyService
         return R.ok().data(map);
     }
+
 }

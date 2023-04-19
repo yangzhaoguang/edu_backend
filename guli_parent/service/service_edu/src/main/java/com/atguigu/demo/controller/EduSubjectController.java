@@ -45,5 +45,4 @@ public class EduSubjectController {
        List<OneSubject> list =  eduSubjectService.getAllSubject();
        return R.ok().data("list",list);
     }
-
 }

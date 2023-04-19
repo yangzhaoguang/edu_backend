@@ -1,9 +1,12 @@
 package com.atguigu.order.controller;
 
 import com.atguigu.commonutils.R;
+import com.atguigu.commonutils.orderVo.OrderQuery;
 import com.atguigu.order.entity.Order;
 import com.atguigu.order.service.OrderService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +52,21 @@ public class OrderController {
     private boolean isBuy(@PathVariable String courseId,@PathVariable(required = false) String memberId) {
         // true : 已支付  false ： 未支付
         return orderService.isBuy(courseId,memberId);
+    }
+
+    /*
+    * 查询订单
+    * */
+    @ApiOperation("多条件组合查询分页功能")
+    @PostMapping("/pageQuery/{current}/{size}")
+    public R pageQuery(
+            @PathVariable(required = false) long current,
+            @PathVariable(required = false) long size,
+            @RequestBody(required = false) OrderQuery orderQuery
+    ) {
+        Page<Order> pageTeacher =  orderService.pageQuery(current,size,orderQuery);
+
+        return R.ok().data("page",pageTeacher);
     }
 
 }

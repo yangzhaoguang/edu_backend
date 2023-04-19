@@ -5,12 +5,14 @@ import java.util.Date;
 import com.atguigu.commonutils.JwtUtils;
 import com.atguigu.commonutils.OrderNoUtil;
 import com.atguigu.commonutils.orderVo.CourseOrderVo;
+import com.atguigu.commonutils.orderVo.OrderQuery;
 import com.atguigu.commonutils.orderVo.UcenterOrderVo;
 import com.atguigu.order.feignService.EduCourseFeignService;
 import com.atguigu.order.feignService.UcenterFeignService;
 import com.atguigu.servicebase.handler.GuliException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.order.entity.Order;
 import com.atguigu.order.service.OrderService;
@@ -30,7 +32,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         implements OrderService {
 
     @Autowired
-    private EduCourseFeignService courseFeignService;
+    private EduCourseFeignService eduCourseFeignService;
     @Autowired
     private UcenterFeignService ucenterFeignService;
     /**
@@ -48,7 +50,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
             throw new GuliException(20001,"用户未登录");
         }
         // 根据课程 id 查询课程信息
-        CourseOrderVo courseOrderVo = courseFeignService.getCourseById(courseId);
+        CourseOrderVo courseOrderVo = eduCourseFeignService.getCourseById(courseId);
         // 根据用户 id 查询用户信息
         UcenterOrderVo ucenterOrderVo = ucenterFeignService.getUserInfoById(userId);
         // 创建订单对象
@@ -82,6 +84,37 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         Order order = this.getOne(queryWrapper);
 
         return order != null;
+    }
+
+
+    @Override
+    public Page<Order> pageQuery(long current, long size, OrderQuery orderQuery) {
+
+        System.out.println("===>" + orderQuery);
+        // 创建分页对象
+        Page<Order> pageOrder = new Page<>(current, size);
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+
+        String username = null;
+        Date createTime = null;
+        Integer status = null;
+
+        if (orderQuery!=null){
+             username = orderQuery.getUsername();
+             createTime = orderQuery.getCreateTime();
+             status = orderQuery.getStatus();
+        }
+        // 获取条件
+        // 使用 condition 组装条件
+        queryWrapper.like(StringUtils.isNotBlank(username), "nickname", username)
+                .ge(createTime != null, "gmt_create", createTime)
+                .eq(status != null, "status", status);
+        //根据创建时间排序
+        queryWrapper.orderByDesc("gmt_create");
+
+        this.page(pageOrder, queryWrapper);
+        // 返回总页数 和 分页数据
+        return pageOrder;
     }
 }
 

@@ -24,7 +24,7 @@ public class GlobalExceptionHandler{
     @ResponseBody  //响应到浏览器上
     public R error(Exception e) {
         e.printStackTrace();
-        return R.error().message("全局处理异常~~~");
+        return R.error().message("系统管理员正在处理~请稍后再试");
     }
 
     @ApiOperation("特定异常处理~")
